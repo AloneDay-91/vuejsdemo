@@ -1,38 +1,37 @@
 <script setup>
 
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import CardPays from '@/components/CardPays.vue'
 
-let data = ref([])
+let data = ref('')
+const recherche = ref('')
+const listePays = ref('')
 
 onMounted(async () => {
-  try {
-    const response = await fetch('https://restcountries.com/v3.1/all');
-    data.value = await response.json();
-  } catch (error) {
-    console.error('Erreur lors du chargement des données :', error);
-  }
+  data.value = await fetch('https://restcountries.com/v3.1/all')
+    .then(response => response.json())
+    .then(data => {
+      return data
+    })
+  listePays.value = data.value
 })
 
-const pays = ref('');
-
-const listeComplete = () => {
-  data.value = data.value.filter(p => p.name.common.toLowerCase().includes(pays.value.toLowerCase()));
-}
-
-const filtrer = () => {
-  listeComplete();
+const rechercher = async () => {
+  if (recherche.value.length > 2) {
+    data.value = listePays.value
+    data.value = listePays.value.filter(pays => pays.name.common.toLowerCase().includes(recherche.value.toLowerCase()))
+  }
 }
 
 </script>
 
 <template>
-  <span>
-    Rechercher un pays : <input v-model="pays" placeholder="Rechercher un pays...">
-    <button @click="filtrer">Rechercher</button>
-    <p>{{pays}}</p>
+  <div>
+    <label for="recherche">Rechercher un pays</label>
+    <input type="text" id="recherche" v-model="recherche" @keyup="rechercher">
+    {{ recherche }}
+  </div>
 
-  </span>
   <h1>Liste des pays ({{ data.length }})</h1>
   <div v-if="data.length" class="grid">
     <CardPays v-for="pays in data" :key="pays.name.common" :pays="pays"/>

@@ -8,6 +8,7 @@ const router = createRouter({
     { path: '/user/:username', component: () => import('@/views/User.vue'), name: 'userRoute' },
     { path: '/pays', component: () => import('@/views/Pays.vue'), name: 'paysRoute' },
     { path: '/fiche-pays/:pays', component: () => import('@/views/FichePays.vue'), name: 'listePaysRoute' },
+    { path: '/rechercher', component: () => import('@/views/Recherche.vue'), name: 'searchRoute' },
   ]
 })
 
