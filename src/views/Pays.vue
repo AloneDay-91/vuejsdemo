@@ -1,11 +1,13 @@
 <script setup>
-
 import { onMounted, ref, watch } from 'vue'
 import CardPays from '@/components/CardPays.vue'
 
 let data = ref('')
 const recherche = ref('')
 const listePays = ref('')
+const afficherImage = ref(true)
+const nbPaysSelectionnes = ref(0)
+const selectAll = ref(false)
 
 onMounted(async () => {
   data.value = await fetch('https://restcountries.com/v3.1/all')
@@ -23,18 +25,46 @@ const rechercher = async () => {
   }
 }
 
+const selectionPays = (selectedPays, pays) => {
+  if (selectedPays ===  true) {
+    nbPaysSelectionnes.value++
+    console.log('Pays sélectionné :', pays.name.common)
+  } else {
+    nbPaysSelectionnes.value--
+    console.log('Pays déselectionné :', pays.name.common)
+  }
+}
+
+watch(() => selectAll.value, (newValue) => {
+  if (newValue === true) {
+    nbPaysSelectionnes.value = listePays.value.length
+  } else {
+    nbPaysSelectionnes.value = 0
+  }
+})
+
 </script>
 
 <template>
   <div>
     <label for="recherche">Rechercher un pays</label>
     <input type="text" id="recherche" v-model="recherche" @keyup="rechercher">
-    {{ recherche }}
+    <span>|</span>
+
+    <input name="image" id="image" type="checkbox" v-model="afficherImage">
+    <label for="image">Afficher uniquement les pays avec drapeau</label>
+    <br>
+    <span>Nombre de pays séléctionné : ({{nbPaysSelectionnes}})</span>
+    <br>
+    <input type="checkbox" id="selectAll" v-model="selectAll"/>
+    <label for="selectAll">Tout sélectionné</label>
+
+
   </div>
 
   <h1>Liste des pays ({{ data.length }})</h1>
   <div v-if="data.length" class="grid">
-    <CardPays v-for="pays in data" :key="pays.name.common" :pays="pays"/>
+    <CardPays v-for="pays in data" :key="pays.name.common" :pays="pays" :image="afficherImage" @pays:selected="selectionPays" :select-all="selectAll"/>
   </div>
   <div v-else>
     <p>Chargement en cours...</p>
