@@ -8,6 +8,7 @@ const listePays = ref('')
 const afficherImage = ref(true)
 const nbPaysSelectionnes = ref(0)
 const selectAll = ref(false)
+const checkSelectAll = ref(false)
 
 onMounted(async () => {
   data.value = await fetch('https://restcountries.com/v3.1/all')
@@ -43,6 +44,18 @@ watch(() => selectAll.value, (newValue) => {
   }
 })
 
+watch(() => nbPaysSelectionnes.value, (newValue) => {
+  if (newValue === listePays.value.length) {
+    checkSelectAll.value = true
+  } else {
+    checkSelectAll.value = false
+  }
+})
+
+const checkIfSelectAll = () => {
+  selectAll.value = checkSelectAll.value
+}
+
 </script>
 
 <template>
@@ -56,7 +69,7 @@ watch(() => selectAll.value, (newValue) => {
     <br>
     <span>Nombre de pays séléctionné : ({{nbPaysSelectionnes}})</span>
     <br>
-    <input type="checkbox" id="selectAll" v-model="selectAll"/>
+    <input type="checkbox" id="selectAll" v-model="checkSelectAll" @change="checkIfSelectAll"/>
     <label for="selectAll">Tout sélectionné</label>
 
 
