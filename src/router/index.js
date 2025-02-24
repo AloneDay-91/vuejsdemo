@@ -9,6 +9,7 @@ const router = createRouter({
     { path: '/pays', component: () => import('@/views/Pays.vue'), name: 'paysRoute' },
     { path: '/fiche-pays/:pays', component: () => import('@/views/FichePays.vue'), name: 'listePaysRoute' },
     { path: '/rechercher', component: () => import('@/views/Recherche.vue'), name: 'searchRoute' },
+    { path: '/fournisseurs', component: () => import('@/views/Fournisseurs.vue'), name: 'fournisseursRoute' },
   ]
 })
 
