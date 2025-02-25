@@ -3,9 +3,11 @@ import { onMounted, ref } from 'vue'
 
 let data = ref(null);
 let libelle = ref('');
-let rue = ref('');
-let cp = ref('');
-let ville = ref('');
+const adresse = ref({
+  rue: '',
+  codepostal: '',
+  ville: ''
+});
 
 onMounted(async () => {
   await getFournisseurs();
@@ -19,13 +21,9 @@ const Ajouter = async () => {
     },
     body: JSON.stringify({
       libelle: libelle.value,
-      adresse: {
-        rue: rue.value,
-        codepostal: cp.value,
-        ville: ville.value
-      }
+      adresse: adresse.value
     })
-  });
+  })
   await getFournisseurs();
 }
 
@@ -33,27 +31,8 @@ async function getFournisseurs() {
   const response = await fetch(`http://symfony.mmi-troyes.fr:8319/api/fournisseurs`);
   let fournisseurs = await response.json();
   fournisseurs = fournisseurs.member;
-
-  // On récupère les détails des adresses
-  for (let fournisseur of fournisseurs) {
-    if (fournisseur.adresse) {
-      fournisseur.adresse = await getAdresse(fournisseur.adresse);
-    }
-  }
-
   data.value = fournisseurs;
 }
-
-async function getAdresse(url) {
-  try {
-    const response = await fetch(`http://symfony.mmi-troyes.fr:8319${url}`);
-    return await response.json();
-  } catch (error) {
-    console.error("Erreur lors de la récupération de l'adresse :", error);
-    return null;
-  }
-}
-
 </script>
 
 <template>
@@ -61,9 +40,11 @@ async function getAdresse(url) {
   <div v-if="data === null">Chargement...</div>
   <div v-else>
     <ul v-for="fournisseur in data" :key="fournisseur.id">
-      <li>Fournisseur {{ fournisseur.libelle }}</li>
-      <li v-if="fournisseur.adresse">
-        {{ fournisseur.adresse.rue }}, {{ fournisseur.adresse.codepostal }} {{ fournisseur.adresse.ville }}
+      <li>
+        Fournisseur {{ fournisseur.libelle }} |
+        <span v-if="fournisseur.adresse">
+          Adresse: {{ fournisseur.adresse != null ? fournisseur.adresse.rue + ', ' + fournisseur.adresse.codepostal + ' ' + fournisseur.adresse.ville : 'N/A' }}
+        </span>
       </li>
     </ul>
   </div>
@@ -76,9 +57,9 @@ async function getAdresse(url) {
       <br>
       <br>
       <label for="adresse">Adresse</label>
-      <input type="text" id="rue" v-model="rue" placeholder="Rue" required>
-      <input type="text" id="cp" v-model="cp" placeholder="Code postal" required>
-      <input type="text" id="ville" v-model="ville" placeholder="Ville" required>
+      <input type="text" id="rue" v-model="adresse.rue" placeholder="Rue" required>
+      <input type="text" id="cp" v-model="adresse.codepostal" placeholder="Code postal" required>
+      <input type="text" id="ville" v-model="adresse.ville" placeholder="Ville" required>
       <button @click.prevent="Ajouter">Ajouter</button>
     </form>
   </div>
