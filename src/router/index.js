@@ -10,6 +10,10 @@ const router = createRouter({
     { path: '/fiche-pays/:pays', component: () => import('@/views/FichePays.vue'), name: 'listePaysRoute' },
     { path: '/rechercher', component: () => import('@/views/Recherche.vue'), name: 'searchRoute' },
     { path: '/fournisseurs', component: () => import('@/views/Fournisseurs.vue'), name: 'fournisseursRoute' },
+    { path: '/regions', component: () => import('@/views/Regions.vue'), name: 'regionsRoute', children: [
+        { path: '/fiche-region/:regions', component: () => import('@/views/FicheRegions.vue'), name: 'listeRegionsRoute' },
+      ]
+    },
   ]
 })
 

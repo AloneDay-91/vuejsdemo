@@ -12,6 +12,7 @@ const username = 'JohnDoe'
       <router-link :to="{name: 'aboutRoute'}">A propos</router-link> |
       <router-link :to="{name: 'userRoute', params: {username: username}}">Utilisateur</router-link> |
       <router-link :to="{name: 'paysRoute'}">Pays</router-link> |
+      <router-link :to="{name: 'regionsRoute'}">Regions</router-link> |
       <router-link :to="{name: 'searchRoute'}">Rechercher</router-link> |
       <router-link :to="{name: 'fournisseursRoute'}">Fournisseurs</router-link>
       <router-view></router-view>
